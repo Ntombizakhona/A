@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Cloud A-Lab: a billing Alarm that sends an email Alert when estimated
+  charges cross a threshold. Deploy in us-east-1 (billing metrics live there).
+  Concepts: Alarms, Alerts, Automation.
+
+Parameters:
+  NotifyEmail:
+    Type: String
+    Description: Email address that receives the alert (you must confirm the subscription).
+  ThresholdUSD:
+    Type: Number
+    Default: 5
+    Description: Send an alert when estimated charges exceed this many US dollars.
+
+Resources:
+  # The "alert" delivery channel.
+  BillingTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: cloud-a-lab-billing
+      Subscription:
+        - Protocol: email
+          Endpoint: !Ref NotifyEmail
+
+  # The "alarm" — the rule that watches the metric.
+  BillingAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: cloud-a-lab-billing-alarm
+      AlarmDescription: !Sub "Estimated charges exceeded ${ThresholdUSD} USD"
+      Namespace: AWS/Billing
+      MetricName: EstimatedCharges
+      Dimensions:
+        - Name: Currency
+          Value: USD
+      Statistic: Maximum
+      Period: 21600
+      EvaluationPeriods: 1
+      Threshold: !Ref ThresholdUSD
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions:
+        - !Ref BillingTopic
+
+Outputs:
+  TopicArn:
+    Value: !Ref BillingTopic

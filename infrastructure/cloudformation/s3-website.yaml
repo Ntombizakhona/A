@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Cloud A-Lab: a static website on S3, defined as code (Automation).
+  This builds the same bucket you made by hand in Step 3, but repeatable
+  and version-controlled. Concepts: Automation, Abstraction, Attributes.
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: A globally-unique bucket name, e.g. cloudglossary-a
+    AllowedPattern: "cloudglossary-a.*"
+    ConstraintDescription: Must start with 'cloudglossary-a' to match the lab IAM policy.
+
+Resources:
+  WebsiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+      # These are the bucket's ATTRIBUTES:
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        IgnorePublicAcls: false
+        BlockPublicPolicy: false
+        RestrictPublicBuckets: false
+
+  # Access Control: allow the public to READ objects (correct for a website).
+  WebsiteBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebsiteBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowPublicReadForWebsite
+            Effect: Allow
+            Principal: "*"
+            Action: "s3:GetObject"
+            Resource: !Sub "arn:aws:s3:::${BucketName}/*"
+
+Outputs:
+  WebsiteURL:
+    Description: Open this in your browser
+    Value: !GetAtt WebsiteBucket.WebsiteURL
+  BucketName:
+    Description: The bucket that was created
+    Value: !Ref WebsiteBucket

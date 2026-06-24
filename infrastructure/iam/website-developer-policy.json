@@ -1,0 +1,33 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "ListBucketsToSeeWhatExists",
+        "Effect": "Allow",
+        "Action": [
+          "s3:ListAllMyBuckets",
+          "s3:GetBucketLocation"
+        ],
+        "Resource": "*"
+      },
+      {
+        "Sid": "ManageOnlyTheLabWebsiteBuckets",
+        "Effect": "Allow",
+        "Action": [
+          "s3:CreateBucket",
+          "s3:DeleteBucket",
+          "s3:PutBucketWebsite",
+          "s3:PutBucketPolicy",
+          "s3:PutBucketPublicAccessBlock",
+          "s3:ListBucket",
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject"
+        ],
+        "Resource": [
+          "arn:aws:s3:::cloudglossary-a*",
+          "arn:aws:s3:::cloudglossary-a*/*"
+        ]
+      }
+    ]
+  }
