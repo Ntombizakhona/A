@@ -1,5 +1,5 @@
-# Cloud Computing Simplified
-## Summarisations of the As | Active Learning Challenge
+# Active Learning Challenge
+## Summarisations of the As 
 ### Introduction
 
 Welcome to the **Active Learning Challenge** for the letter **A** of the [Cloud Glossary for Beginners](https://ntombizakhona.medium.com/list/cloud-glossary-for-beginners-528956a3c181).
